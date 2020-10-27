@@ -7,6 +7,8 @@ import com.example.demo.repository.VehicleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -15,11 +17,14 @@ import java.util.Arrays;
 @Slf4j
 public class DataInitializer implements CommandLineRunner {
 
+    private final PasswordEncoder passwordEncoder;
+
     private final VehicleRepository vehicles;
 
     private final UserRepository users;
 
     public DataInitializer(VehicleRepository vehicles, UserRepository users) {
+        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         this.vehicles = vehicles;
         this.users = users;
     }
@@ -34,14 +39,14 @@ public class DataInitializer implements CommandLineRunner {
 
         users.save(VehicleAppUser.builder()
             .username("user")
-            .password("password")
+            .password(passwordEncoder.encode("password"))
             .roles(Arrays.asList("ROLE_USER"))
             .build()
         );
 
         users.save(VehicleAppUser.builder()
             .username("admin")
-            .password("password")
+            .password(passwordEncoder.encode("password"))
             .roles(Arrays.asList("ROLE_USER", "ROLE_ADMIN"))
             .build()
         );
